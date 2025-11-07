@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:background="@drawable/border"
+        android:layout_margin="6dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/imgProduct"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="centerCrop"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+            <TextView android:id="@+id/tvTenSP" android:textStyle="bold"/>
+            <TextView android:id="@+id/tvLoaiSP"/>
+            <TextView android:id="@+id/tvGiaSP"/>
+        </LinearLayout>
+
+        <ImageButton android:id="@+id/btnEdit" android:src="@drawable/ic_edit" />
+        <ImageButton android:id="@+id/btnDelete" android:src="@drawable/ic_delete" />
+    </LinearLayout>
+
+</PreferenceScreen>

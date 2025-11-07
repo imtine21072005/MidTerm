@@ -1,25 +1,11 @@
 package com.example.midterm
 
-import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -27,32 +13,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
-import androidx.compose.material.icons.filled.RemoveRedEye
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -61,231 +31,171 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
-
-import android.content.Context
-
-import android.text.TextUtils
-import androidx.compose.ui.platform.LocalContext
-
+import android.content.Intent
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SignIn(navController: NavHostController){
+fun SignIn(navController: NavHostController) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val (focusUsername, focusPassword) = remember {FocusRequester.createRefs()}
+    val (focusUsername, focusPassword) = remember { FocusRequester.createRefs() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    var isPasswordVisible by remember{ mutableStateOf(false) }
-//    lateinit var firebaseAuth: FirebaseAuth
+    var isPasswordVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val firebaseAuth = FirebaseAuth.getInstance()
 
-    var firebaseAuth = FirebaseAuth.getInstance()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFFCF4)),
-//        verticalArrangement = Arrangement.Center,
+            .background(Color(0xFFFFF8F4)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(fraction = 0.40f)
-        ){
+        // Hình đầu trang
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(fraction = 0.35f)
+        ) {
             Image(
-                painter = painterResource(id = R.drawable.log),
-                contentDescription = "",
+                painter = painterResource(id = R.drawable.highlands_signin),
+                contentDescription = "Banner Trà sữa",
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillBounds)
+                contentScale = ContentScale.Crop
+            )
         }
+
         Spacer(modifier = Modifier.size(30.dp))
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 40.dp),
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row {
-                Text(text = "Wellcome Back ", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Text(text = " PIZZERIA!", fontSize = 21.sp, fontWeight = FontWeight.Bold, color = Color(0xFFB90020),)
-            }
-            Spacer(modifier = Modifier.size(30.dp))
-            OutlinedTextField(value = username, onValueChange = {username = it},
+            Text(
+                text = "Chào mừng trở lại 🍃",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF4C1D95)
+            )
+            Text(
+                text = "Đăng nhập để quản lý Trà sữa!",
+                fontSize = 16.sp,
+                color = Color(0xFF6B7280)
+            )
+
+            Spacer(modifier = Modifier.size(25.dp))
+
+            // Email
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(70.dp)
-                    .padding(top = 0.dp, bottom = 0.dp)
+                    .height(65.dp)
                     .focusRequester(focusUsername),
                 shape = RoundedCornerShape(12.dp),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(onNext = {focusPassword.requestFocus()}),
+                keyboardActions = KeyboardActions(onNext = { focusPassword.requestFocus() }),
                 singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     containerColor = Color.White,
-                    focusedBorderColor =Color(0xFFB90020),
-                    unfocusedBorderColor = Color(0xFFB90020)
+                    focusedBorderColor = Color(0xFF8B5CF6),
+                    unfocusedBorderColor = Color(0xFF8B5CF6)
                 ),
-                label = { Text(text = "Email", color = Color(0xFFB90020))}
+                label = { Text(text = "Email", color = Color(0xFF8B5CF6)) }
             )
-            Spacer(modifier = Modifier.size(9.dp))
-            OutlinedTextField(modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp)
-                .focusRequester(focusPassword),
+
+            Spacer(modifier = Modifier.size(10.dp))
+
+            // Password
+            OutlinedTextField(
                 value = password,
-                onValueChange = {password = it},
+                onValueChange = { password = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(65.dp)
+                    .focusRequester(focusPassword),
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = {keyboardController?.hide()}),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
                 visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
-                       IconButton(onClick = {isPasswordVisible = !isPasswordVisible}) {
-                           Icon(imageVector = if(isPasswordVisible)Icons.Default.LockOpen else Icons.Default.Lock,
-                               contentDescription = "Password Toggle",
-                               tint = Color(0xFFB90020)
-                           )
-                       }
+                    IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                        Icon(
+                            imageVector = if (isPasswordVisible) Icons.Default.LockOpen else Icons.Default.Lock,
+                            contentDescription = "Toggle password",
+                            tint = Color(0xFF8B5CF6)
+                        )
+                    }
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     containerColor = Color.White,
-                    focusedBorderColor = Color(0xFFB90020),
-                    unfocusedBorderColor = Color(0xFFB90020)
+                    focusedBorderColor = Color(0xFF8B5CF6),
+                    unfocusedBorderColor = Color(0xFF8B5CF6)
                 ),
-                label = { Text(text = "Password", color = Color(0xFFB90020),)},
-
+                label = { Text(text = "Mật khẩu", color = Color(0xFF8B5CF6)) }
             )
-            Spacer(modifier = Modifier.size(20.dp))
+
+            Spacer(modifier = Modifier.size(25.dp))
+
+            // Nút đăng nhập
             Button(
                 onClick = {
                     if (username.isNotEmpty() && password.isNotEmpty()) {
                         firebaseAuth.signInWithEmailAndPassword(username, password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-                                    val user = firebaseAuth.currentUser
-                                    if (user != null) {
-                                        if (user.isEmailVerified) {
-                                            // ✅ Đăng nhập thành công & đã xác minh email
-                                            navController.navigate(Screen.Home.rout)
-                                        } else {
-                                            // ⚠️ Email chưa xác minh
-                                            Toast.makeText(
-                                                context,
-                                                "Email của bạn chưa được xác minh. Vui lòng kiểm tra hộp thư và xác minh trước khi đăng nhập.",
-                                                Toast.LENGTH_LONG
-                                            ).show()
-
-                                            // Gợi ý gửi lại email xác minh
-                                            user.sendEmailVerification()
-                                                .addOnSuccessListener {
-                                                    Toast.makeText(context, "Đã gửi lại email xác minh!", Toast.LENGTH_SHORT).show()
-                                                }
-                                                .addOnFailureListener {
-                                                    Toast.makeText(context, "Không thể gửi email xác minh: ${it.message}", Toast.LENGTH_SHORT).show()
-                                                }
-                                        }
+                                    // ✅ Điều hướng sang HomeScreen qua NavController
+                                    navController.navigate(Screen.Home.rout) {
+                                        popUpTo(Screen.Signin.rout) { inclusive = true }
                                     }
                                 } else {
-                                    val exception = task.exception
-                                    when {
-                                        exception?.message?.contains("no user record") == true ||
-                                                exception?.message?.contains("user may have been deleted") == true -> {
-                                            Toast.makeText(context, "Tài khoản này chưa tồn tại. Vui lòng đăng ký trước!", Toast.LENGTH_LONG).show()
-                                        }
-
-                                        exception?.message?.contains("password is invalid") == true ||
-                                                exception?.message?.contains("INVALID_LOGIN_CREDENTIALS") == true -> {
-                                            Toast.makeText(context, "Sai mật khẩu. Vui lòng thử lại!", Toast.LENGTH_LONG).show()
-                                        }
-
-                                        else -> {
-                                            Toast.makeText(context, "Đăng nhập thất bại: ${exception?.localizedMessage}", Toast.LENGTH_LONG).show()
-                                        }
-                                    }
+                                    Toast.makeText(
+                                        context,
+                                        "Đăng nhập thất bại: ${task.exception?.message}",
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 }
                             }
                     } else {
-                        Toast.makeText(context, "Không được để trống Email hoặc Mật khẩu!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Vui lòng nhập đầy đủ Email và Mật khẩu!", Toast.LENGTH_SHORT).show()
                     }
-                },
+                }
+                ,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
+                    .height(55.dp),
                 shape = RoundedCornerShape(16.dp),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 15.dp,
-                    pressedElevation = 6.dp
-                ),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFB90020)
-                ),
-                border = BorderStroke(0.5.dp, Color.Red)
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B5CF6))
             ) {
-                Text(text = "Sign In", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Text("Đăng nhập", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
             }
 
-            Spacer(modifier = Modifier.size(19.dp))
+            Spacer(modifier = Modifier.size(15.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Is it first for you? ", textAlign = TextAlign.Center)
-                TextButton(onClick = {
-                    navController.navigate(Screen.Signup.rout)
-                                     },
-                    ) {
-                    Text(text = "Sign Up now!",fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFFB90020))
-                }
-                            }
-            Spacer(modifier = Modifier.size(16.dp))
-            Row(modifier = Modifier.fillMaxWidth(), Arrangement.Center) {
-                Text(text = "OR Sign In with")
-            }
-            Spacer(modifier = Modifier.size(13.dp))
-            Row(modifier = Modifier
-                .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .border(
-                            border = BorderStroke(0.5.dp, Color(0xFFD9D9D9)),
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.gg),
-                        contentDescription = "Logo GG",
-                        modifier = Modifier.size(25.dp),
-                        tint = Color.Unspecified
-                    )
-                }
-                Spacer(modifier = Modifier.width(20.dp))
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .border(
-                            border = BorderStroke(0.5.dp, Color(0xFFD9D9D9)),
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.fb),
-                        contentDescription = "Logo FB",
-                        modifier = Modifier.size(25.dp),
-                        tint = Color.Unspecified
+                Text(text = "Chưa có tài khoản?")
+                TextButton(onClick = { navController.navigate(Screen.Signup.rout) }) {
+                    Text(
+                        text = "Đăng ký ngay!",
+                        color = Color(0xFF8B5CF6),
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
-            
         }
     }
 }
-
